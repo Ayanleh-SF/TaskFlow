@@ -35,7 +35,7 @@ def verify_password(password: str, stored_password: str) -> bool:
 
 def create_access_token(user_id: int):
     return jwt.encode(
-        {"sub": user_id, "type": "access", "exp": datetime.utcnow() + timedelta(minutes=settings.ACCESS_EXPIRE_MIN)},
+        {"sub": str(user_id), "type": "access", "exp": datetime.utcnow() + timedelta(minutes=settings.ACCESS_EXPIRE_MIN)},
         settings.SECRET_KEY,
         algorithm="HS256"
     )
@@ -44,7 +44,7 @@ def create_access_token(user_id: int):
 def create_refresh_token(user_id: int):
     jti = str(uuid.uuid4())
     return jwt.encode(
-        {"sub": user_id, "jti": jti, "type": "refresh", "exp": datetime.utcnow() + timedelta(days=settings.REFRESH_EXPIRE_DAYS)},
+        {"sub": str(user_id), "jti": jti, "type": "refresh", "exp": datetime.utcnow() + timedelta(days=settings.REFRESH_EXPIRE_DAYS)},
         settings.SECRET_KEY,
         algorithm="HS256"
     ), jti

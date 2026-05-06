@@ -4,28 +4,28 @@ from db.session import get_db
 from services.auth_service import (
     login as login_service,
     refresh as refresh_service,
-    register as register_service,
 )
-from schemas.auth import TokenPair, RefreshPayload
+from services.user_service import create_user
+from schemas.auth import LoginPayload, TokenPair, RefreshPayload
 from schemas.user import UserCreate, UserOut
 from jose import jwt, JWTError
 from core.config import settings
 
-router = APIRouter()
+router = APIRouter(prefix="/auth", tags=["auth"])
 
 
 @router.post("/register", response_model=UserOut, status_code=201)
 def register(data: UserCreate, db: Session = Depends(get_db)):
     try:
-        return register_service(db, data)
+        return create_user(db, data)
     except ValueError as exc:
         raise HTTPException(400, str(exc))
 
 
 @router.post("/login", response_model=TokenPair)
-def login(username: str, password: str, db: Session = Depends(get_db)):
+def login(data: LoginPayload, db: Session = Depends(get_db)):
     try:
-        access, refresh = login_service(db, username, password)
+        access, refresh = login_service(db, data.username, data.password)
         return {"access": access, "refresh": refresh}
     except Exception:
         raise HTTPException(401, "Invalid credentials")

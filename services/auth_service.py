@@ -1,33 +1,11 @@
 from sqlalchemy.orm import Session
 from models.user import User
 from models.token import RefreshToken
-from schemas.user import UserCreate
 from core.security import (
     create_access_token,
     create_refresh_token,
-    hash_password,
     verify_password,
 )
-
-
-def register(db: Session, data: UserCreate):
-    existing_user = (
-        db.query(User)
-        .filter((User.username == data.username) | (User.email == data.email))
-        .first()
-    )
-    if existing_user:
-        raise ValueError("Username or email already exists")
-
-    user = User(
-        username=data.username,
-        email=data.email,
-        hashed_password=hash_password(data.password),
-    )
-    db.add(user)
-    db.commit()
-    db.refresh(user)
-    return user
 
 
 def login(db: Session, username: str, password: str):
@@ -46,6 +24,7 @@ def login(db: Session, username: str, password: str):
 
 def refresh(db: Session, token_payload):
     jti = token_payload.get("jti")
+    user_id = int(token_payload["sub"])
 
     stored = db.query(RefreshToken).filter(RefreshToken.jti == jti).first()
     if not stored:
@@ -56,10 +35,10 @@ def refresh(db: Session, token_payload):
     db.commit()
 
     # ISSUE NEW TOKENS
-    access = create_access_token(token_payload["sub"])
-    refresh, new_jti = create_refresh_token(token_payload["sub"])
+    access = create_access_token(user_id)
+    refresh, new_jti = create_refresh_token(user_id)
 
-    db.add(RefreshToken(user_id=token_payload["sub"], jti=new_jti))
+    db.add(RefreshToken(user_id=user_id, jti=new_jti))
     db.commit()
 
     return access, refresh

@@ -6,7 +6,7 @@ from db.session import get_db
 from sqlalchemy.orm import Session
 from models.user import User
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login")
 
 
 def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
@@ -14,8 +14,8 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(
         payload = jwt.decode(token, settings.SECRET_KEY, algorithms=["HS256"])
         if payload.get("type") != "access":
             raise HTTPException(401, "Invalid token type")
-        user_id = payload.get("sub")
-    except JWTError:
+        user_id = int(payload.get("sub"))
+    except (JWTError, TypeError, ValueError):
         raise HTTPException(401, "Invalid token")
 
     user = db.query(User).filter(User.id == user_id).first()
