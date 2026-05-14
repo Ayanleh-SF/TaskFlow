@@ -12,6 +12,8 @@ def login(db: Session, username: str, password: str):
     user = db.query(User).filter(User.username == username).first()
     if not user or not verify_password(password, user.hashed_password):
         raise Exception("Invalid creds")
+    if not user.is_active:
+        raise PermissionError("Email not confirmed")
 
     access = create_access_token(user.id)
     refresh, jti = create_refresh_token(user.id)

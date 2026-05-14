@@ -5,7 +5,8 @@ from services.auth_service import (
     login as login_service,
     refresh as refresh_service,
 )
-from services.user_service import create_user
+from services.email_service import EmailDeliveryError
+from services.user_service import confirm_user_email, create_user
 from schemas.auth import LoginPayload, TokenPair, RefreshPayload
 from schemas.user import UserCreate, UserOut
 from jose import jwt, JWTError
@@ -20,6 +21,8 @@ def register(data: UserCreate, db: Session = Depends(get_db)):
         return create_user(db, data)
     except ValueError as exc:
         raise HTTPException(400, str(exc))
+    except EmailDeliveryError:
+        raise HTTPException(502, "Confirmation email could not be sent")
 
 
 @router.post("/login", response_model=TokenPair)
@@ -27,8 +30,18 @@ def login(data: LoginPayload, db: Session = Depends(get_db)):
     try:
         access, refresh = login_service(db, data.username, data.password)
         return {"access": access, "refresh": refresh}
+    except PermissionError as exc:
+        raise HTTPException(403, str(exc))
     except Exception:
         raise HTTPException(401, "Invalid credentials")
+
+
+@router.get("/confirm-email", response_model=UserOut)
+def confirm_email(token: str, db: Session = Depends(get_db)):
+    try:
+        return confirm_user_email(db, token)
+    except ValueError as exc:
+        raise HTTPException(400, str(exc))
 
 
 @router.post("/refresh", response_model=TokenPair)
