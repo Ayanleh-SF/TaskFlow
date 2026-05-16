@@ -10,6 +10,9 @@ def create_task(db: Session, user_id: int, data: TaskCreate) -> Task:
         title=data.title,
         description=data.description,
         status=data.status,
+        owner=data.owner,
+        due_date=data.due_date,
+        priority=data.priority,
     )
     db.add(task)
     db.commit()
