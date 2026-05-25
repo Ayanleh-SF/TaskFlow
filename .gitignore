@@ -4,6 +4,7 @@ __pycache__/
 venv/
 .env
 taskflow.db
+logs/
 .DS_Store
 frontend/node_modules/
 frontend/dist/

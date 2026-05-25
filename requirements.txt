@@ -3,3 +3,4 @@ uvicorn[standard]
 SQLAlchemy
 python-jose[cryptography]
 pydantic-settings
+psycopg2-binary

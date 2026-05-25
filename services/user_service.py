@@ -24,11 +24,14 @@ def create_user(db: Session, data: UserCreate) -> User:
         username=data.username,
         email=data.email,
         hashed_password=hash_password(data.password),
-        is_active=False,
+        is_active=not settings.REQUIRE_EMAIL_CONFIRMATION,
     )
     db.add(user)
     db.commit()
     db.refresh(user)
+
+    if not settings.REQUIRE_EMAIL_CONFIRMATION:
+        return user
 
     try:
         send_confirmation_email(db, user)

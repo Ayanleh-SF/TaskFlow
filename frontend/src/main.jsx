@@ -202,6 +202,13 @@ function App() {
     return <AuthScreen onLogin={handleLogin} message={message} />;
   }
 
+  const pageTitle = {
+    workspace: "Travail personnel",
+    dashboard: "Dashboard",
+    automations: "Automations",
+    logs: "Logs",
+  }[activePage];
+
   return (
     <main className="app-shell">
       <aside className="sidebar" aria-label="Navigation principale">
@@ -224,7 +231,20 @@ function App() {
           >
             Dashboard
           </button>
-          <button type="button" disabled>Automations</button>
+          <button
+            className={activePage === "automations" ? "active" : ""}
+            type="button"
+            onClick={() => setActivePage("automations")}
+          >
+            Automations
+          </button>
+          <button
+            className={activePage === "logs" ? "active" : ""}
+            type="button"
+            onClick={() => setActivePage("logs")}
+          >
+            Logs
+          </button>
           <button type="button" disabled>Inbox</button>
         </nav>
         <div className="workspace-card">
@@ -240,7 +260,7 @@ function App() {
         <header className="topbar">
           <div>
             <p className="eyebrow">Work management</p>
-            <h1>{activePage === "dashboard" ? "Dashboard" : "Travail personnel"}</h1>
+            <h1>{pageTitle}</h1>
           </div>
           <div className="account">
             <span className="avatar">{(user?.username || "C").slice(0, 1).toUpperCase()}</span>
@@ -256,6 +276,10 @@ function App() {
         ) : (
           activePage === "dashboard" ? (
             <Dashboard tasks={tasks} />
+          ) : activePage === "automations" ? (
+            <Automations tasks={tasks} />
+          ) : activePage === "logs" ? (
+            <LogsPanel api={api} setMessage={setMessage} />
           ) : (
             <TaskBoard
               api={api}
@@ -305,7 +329,12 @@ function AuthScreen({ onLogin, message }) {
           throw new Error("Inscription impossible");
         }
 
-        setInfo("Compte cree. Confirme ton inscription depuis le mail recu avant de te connecter.");
+        const createdUser = await registerResponse.json();
+        setInfo(
+          createdUser.is_active
+            ? "Compte cree. Tu peux te connecter."
+            : "Compte cree. Confirme ton inscription depuis le mail recu avant de te connecter.",
+        );
         setMode("login");
         setForm({ ...form, password: "" });
         return;
@@ -562,6 +591,282 @@ function ProgressRow({ label, count, total, className }) {
         <span className={className} style={{ width: `${width}%` }} />
       </div>
     </div>
+  );
+}
+
+function Automations({ tasks }) {
+  const now = new Date();
+  now.setHours(0, 0, 0, 0);
+  const nextWeek = now.getTime() + 7 * 24 * 60 * 60 * 1000;
+  const overdueTasks = tasks.filter(
+    (task) =>
+      task.status !== "termine" &&
+      task.due_date &&
+      getTaskTimestamp(task) < now.getTime(),
+  );
+  const noDateTasks = tasks.filter(
+    (task) => task.status !== "termine" && !task.due_date,
+  );
+  const highPriorityTasks = tasks.filter(
+    (task) => task.status !== "termine" && getTaskPriority(task) === "Haute",
+  );
+  const dueSoonTasks = tasks.filter((task) => {
+    const timestamp = getTaskTimestamp(task);
+    return task.status !== "termine" && timestamp && timestamp <= nextWeek;
+  });
+
+  const [enabledRules, setEnabledRules] = useState({
+    overdue: true,
+    focus: true,
+    schedule: false,
+    weekly: false,
+  });
+
+  const rules = [
+    {
+      id: "overdue",
+      title: "Surveiller les retards",
+      description: "Signale les taches actives dont la date est depassee.",
+      count: overdueTasks.length,
+    },
+    {
+      id: "focus",
+      title: "Mettre en avant les priorites hautes",
+      description: "Garde les elements critiques visibles dans le suivi.",
+      count: highPriorityTasks.length,
+    },
+    {
+      id: "schedule",
+      title: "Detecter les taches sans date",
+      description: "Repere les elements actifs qui n'ont pas encore d'echeance.",
+      count: noDateTasks.length,
+    },
+    {
+      id: "weekly",
+      title: "Preparer la semaine",
+      description: "Liste les echeances qui arrivent dans les 7 prochains jours.",
+      count: dueSoonTasks.length,
+    },
+  ];
+
+  const recommendations = [
+    {
+      title: "A traiter maintenant",
+      detail: `${overdueTasks.length} tache(s) en retard`,
+      tone: overdueTasks.length ? "danger" : "",
+    },
+    {
+      title: "A planifier",
+      detail: `${noDateTasks.length} tache(s) sans date`,
+      tone: noDateTasks.length ? "warning" : "",
+    },
+    {
+      title: "Focus",
+      detail: `${highPriorityTasks.length} priorite(s) haute(s) actives`,
+      tone: highPriorityTasks.length ? "info" : "",
+    },
+  ];
+
+  function toggleRule(ruleId) {
+    setEnabledRules({ ...enabledRules, [ruleId]: !enabledRules[ruleId] });
+  }
+
+  return (
+    <section className="automations" id="automations">
+      <div className="dashboard-hero">
+        <div>
+          <p className="eyebrow">Automations</p>
+          <h2>Piloter le travail sans tout verifier a la main</h2>
+          <p className="board-subtitle">
+            Des regles simples pour reperer les retards, les priorites et les taches a planifier.
+          </p>
+        </div>
+        <div className="automation-score" aria-label="Automatisations actives">
+          <strong>{Object.values(enabledRules).filter(Boolean).length}</strong>
+          <span>regles actives</span>
+        </div>
+      </div>
+
+      <div className="automation-grid">
+        <section className="dashboard-panel automation-rules">
+          <header>
+            <h3>Regles recommandees</h3>
+            <span>{rules.length} disponibles</span>
+          </header>
+          <div className="rule-list">
+            {rules.map((rule) => (
+              <article className="rule-item" key={rule.id}>
+                <div>
+                  <strong>{rule.title}</strong>
+                  <p>{rule.description}</p>
+                  <small>{rule.count} element(s) concernes</small>
+                </div>
+                <button
+                  className={`toggle-pill ${enabledRules[rule.id] ? "active" : ""}`}
+                  type="button"
+                  onClick={() => toggleRule(rule.id)}
+                  aria-pressed={enabledRules[rule.id]}
+                >
+                  {enabledRules[rule.id] ? "Active" : "Inactive"}
+                </button>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section className="dashboard-panel">
+          <header>
+            <h3>Recommandations</h3>
+            <span>basees sur le board</span>
+          </header>
+          <div className="recommendation-list">
+            {recommendations.map((item) => (
+              <article className={`recommendation-item ${item.tone}`} key={item.title}>
+                <span />
+                <div>
+                  <strong>{item.title}</strong>
+                  <small>{item.detail}</small>
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section className="dashboard-panel automation-preview">
+          <header>
+            <h3>Apercu des actions</h3>
+            <span>{dueSoonTasks.length} echeance(s) proches</span>
+          </header>
+          <div className="next-list">
+            {dueSoonTasks.slice(0, 5).map((task) => (
+              <article className="next-item" key={task.id}>
+                <div>
+                  <strong>{task.title}</strong>
+                  <small>{getTaskOwner(task)} - {getTaskDate(task)}</small>
+                </div>
+                <span className={`priority-chip priority-${getTaskPriority(task).toLowerCase()}`}>
+                  {getTaskPriority(task)}
+                </span>
+              </article>
+            ))}
+            {dueSoonTasks.length === 0 && (
+              <p className="empty-text">Aucune action automatique urgente</p>
+            )}
+          </div>
+        </section>
+      </div>
+    </section>
+  );
+}
+
+function LogsPanel({ api, setMessage }) {
+  const [logs, setLogs] = useState([]);
+  const [level, setLevel] = useState("");
+  const [query, setQuery] = useState("");
+  const [loadingLogs, setLoadingLogs] = useState(false);
+
+  async function loadLogs() {
+    setLoadingLogs(true);
+    setMessage("");
+    const params = new URLSearchParams({ limit: "300" });
+
+    if (level) {
+      params.set("level", level);
+    }
+
+    if (query.trim()) {
+      params.set("query", query.trim());
+    }
+
+    try {
+      const response = await api.request(`/logs?${params.toString()}`);
+      setLogs(response.entries);
+    } catch (error) {
+      setMessage(error.message);
+    } finally {
+      setLoadingLogs(false);
+    }
+  }
+
+  async function clearLogEntries() {
+    setMessage("");
+    try {
+      await api.request("/logs", { method: "DELETE" });
+      setLogs([]);
+    } catch (error) {
+      setMessage(error.message);
+    }
+  }
+
+  useEffect(() => {
+    loadLogs();
+  }, [level]);
+
+  return (
+    <section className="logs-page" id="logs">
+      <div className="dashboard-hero">
+        <div>
+          <p className="eyebrow">Observabilite</p>
+          <h2>Journal de l'application</h2>
+          <p className="board-subtitle">
+            Consulte les requetes API, les erreurs serveur et les evenements utiles.
+          </p>
+        </div>
+        <div className="automation-score" aria-label="Nombre de logs affiches">
+          <strong>{logs.length}</strong>
+          <span>lignes affichees</span>
+        </div>
+      </div>
+
+      <div className="logs-toolbar">
+        <input
+          value={query}
+          onChange={(event) => setQuery(event.target.value)}
+          onKeyDown={(event) => {
+            if (event.key === "Enter") {
+              loadLogs();
+            }
+          }}
+          placeholder="Rechercher dans les logs"
+        />
+        <select value={level} onChange={(event) => setLevel(event.target.value)}>
+          <option value="">Tous niveaux</option>
+          <option value="INFO">INFO</option>
+          <option value="WARNING">WARNING</option>
+          <option value="ERROR">ERROR</option>
+          <option value="CRITICAL">CRITICAL</option>
+        </select>
+        <button className="ghost-button" type="button" onClick={loadLogs}>
+          Actualiser
+        </button>
+        <button className="danger-button" type="button" onClick={clearLogEntries}>
+          Vider
+        </button>
+      </div>
+
+      <section className="dashboard-panel logs-panel">
+        <header>
+          <h3>Requetes et evenements</h3>
+          <span>{loadingLogs ? "chargement" : `${logs.length} resultat(s)`}</span>
+        </header>
+        <div className="log-list">
+          {logs.map((entry, index) => (
+            <article className="log-row" key={`${entry.raw}-${index}`}>
+              <span className={`log-level level-${(entry.level || "raw").toLowerCase()}`}>
+                {entry.level || "RAW"}
+              </span>
+              <div>
+                <small>{entry.timestamp || "Sans date"} - {entry.logger || "application"}</small>
+                <code>{entry.message}</code>
+              </div>
+            </article>
+          ))}
+          {logs.length === 0 && (
+            <p className="empty-text">Aucun log a afficher</p>
+          )}
+        </div>
+      </section>
+    </section>
   );
 }
 

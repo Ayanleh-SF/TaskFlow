@@ -351,6 +351,16 @@ select:focus {
   gap: 16px;
 }
 
+.automations {
+  display: grid;
+  gap: 16px;
+}
+
+.logs-page {
+  display: grid;
+  gap: 16px;
+}
+
 .board-hero {
   display: flex;
   align-items: stretch;
@@ -555,6 +565,212 @@ select:focus {
 .next-item .priority-chip {
   min-height: 34px;
   padding: 8px 10px;
+}
+
+.automation-score {
+  display: grid;
+  align-content: center;
+  gap: 4px;
+  min-width: 170px;
+  padding: 16px;
+  border-radius: 8px;
+  background: #eef3ff;
+}
+
+.automation-score strong {
+  color: #0073ea;
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.automation-score span {
+  color: #323338;
+  font-weight: 850;
+}
+
+.automation-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(280px, 0.75fr);
+  gap: 16px;
+}
+
+.automation-rules {
+  grid-row: span 2;
+}
+
+.rule-list,
+.recommendation-list {
+  display: grid;
+  gap: 10px;
+}
+
+.rule-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 112px;
+  align-items: center;
+  gap: 14px;
+  padding: 12px;
+  border: 1px solid #edf0f5;
+  border-radius: 8px;
+  background: #fafbfc;
+}
+
+.rule-item strong {
+  display: block;
+  margin-bottom: 5px;
+  color: #181b34;
+}
+
+.rule-item p,
+.rule-item small {
+  margin: 0;
+  color: #676879;
+  line-height: 1.4;
+}
+
+.rule-item small {
+  display: block;
+  margin-top: 7px;
+  font-weight: 800;
+}
+
+.toggle-pill {
+  min-height: 34px;
+  border: 1px solid #d0d4e4;
+  border-radius: 999px;
+  background: #ffffff;
+  color: #676879;
+  font-weight: 900;
+}
+
+.toggle-pill.active {
+  border-color: #00c875;
+  background: #e9fff5;
+  color: #00854d;
+}
+
+.recommendation-item {
+  display: grid;
+  grid-template-columns: 10px minmax(0, 1fr);
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid #edf0f5;
+  border-radius: 8px;
+  background: #fafbfc;
+}
+
+.recommendation-item > span {
+  width: 10px;
+  border-radius: 999px;
+  background: #c4c4c4;
+}
+
+.recommendation-item.danger > span {
+  background: #d83a52;
+}
+
+.recommendation-item.warning > span {
+  background: #fdab3d;
+}
+
+.recommendation-item.info > span {
+  background: #0073ea;
+}
+
+.recommendation-item strong,
+.recommendation-item small {
+  display: block;
+}
+
+.recommendation-item strong {
+  color: #181b34;
+}
+
+.recommendation-item small {
+  margin-top: 4px;
+  color: #676879;
+  font-weight: 800;
+}
+
+.automation-preview {
+  align-content: start;
+}
+
+.logs-toolbar {
+  display: grid;
+  grid-template-columns: minmax(220px, 1fr) 150px auto auto;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid #dfe3eb;
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.logs-panel {
+  min-height: 420px;
+}
+
+.log-list {
+  display: grid;
+  gap: 8px;
+  max-height: 58vh;
+  overflow: auto;
+  padding-right: 4px;
+}
+
+.log-row {
+  display: grid;
+  grid-template-columns: 82px minmax(0, 1fr);
+  align-items: start;
+  gap: 10px;
+  padding: 10px;
+  border: 1px solid #edf0f5;
+  border-radius: 8px;
+  background: #fafbfc;
+}
+
+.log-row small {
+  display: block;
+  margin-bottom: 5px;
+  color: #676879;
+  font-weight: 800;
+}
+
+.log-row code {
+  display: block;
+  overflow-wrap: anywhere;
+  color: #181b34;
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  font-size: 0.84rem;
+  line-height: 1.5;
+  white-space: pre-wrap;
+}
+
+.log-level {
+  display: grid;
+  min-height: 28px;
+  place-items: center;
+  border-radius: 999px;
+  background: #eef3ff;
+  color: #0073ea;
+  font-size: 0.72rem;
+  font-weight: 950;
+}
+
+.level-warning {
+  background: #fff7df;
+  color: #9d6400;
+}
+
+.level-error,
+.level-critical {
+  background: #fff2f2;
+  color: #d83a52;
+}
+
+.level-raw {
+  background: #edf0f5;
+  color: #676879;
 }
 
 .quick-add {
@@ -1023,7 +1239,24 @@ select:focus {
   }
 
   .metric-grid,
-  .dashboard-grid {
+  .dashboard-grid,
+  .automation-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .automation-rules {
+    grid-row: auto;
+  }
+
+  .rule-item {
+    grid-template-columns: 1fr;
+  }
+
+  .logs-toolbar {
+    grid-template-columns: 1fr;
+  }
+
+  .log-row {
     grid-template-columns: 1fr;
   }
 
