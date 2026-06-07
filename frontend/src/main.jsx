@@ -374,7 +374,7 @@ function AuthScreen({ onLogin, message }) {
             <strong>TaskFlow</strong>
           </div>
           <p className="eyebrow">Work OS personnel</p>
-          <h1>Centralise tes taches comme dans un vrai workspace</h1>
+          <h1>Le hub simple et rapide pour gérer toutes tes tâches</h1>
         </div>
 
         <div className="mode-switch" aria-label="Mode d'authentification">
@@ -433,7 +433,7 @@ function AuthScreen({ onLogin, message }) {
           </label>
 
           <button className="primary-button" disabled={busy}>
-            {busy ? "Patiente..." : mode === "login" ? "Se connecter" : "Creer le compte"}
+            {busy ? "Connexion..." : mode === "login" ? "Se connecter" : "Creer le compte"}
           </button>
         </form>
 
