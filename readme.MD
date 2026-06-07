@@ -73,7 +73,7 @@ GET  /api/v1/users/{user_id}
 
 ## Confirmation email
 
-L'inscription envoie un vrai email de confirmation via SMTP. Configure les variables d'environnement suivantes dans `.env` :
+L'inscription envoie un email de confirmation via SMTP. Configure les variables d'environnement suivantes dans `.env` :
 
 ```text
 SMTP_HOST=smtp-relay.brevo.com
@@ -85,4 +85,4 @@ EMAIL_FROM=noreply@ayanleh.fr
 API_BASE_URL=http://127.0.0.1:8000/api/v1
 ```
 
-Si l'email de confirmation ne peut pas etre envoye, le compte n'est pas conserve.
+Si l'email de confirmation ne peut pas être envoyé, le compte n'est pas conservé.
