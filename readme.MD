@@ -1,5 +1,6 @@
+Application permettant d'organiser ses tâches et de suivre leur avancement.
 
-authentification des users
+Prend en compte : 
 -> inscription
 -> confirmation email
 -> connexion
@@ -8,7 +9,7 @@ authentification des users
 -> middleware d'authentification
 
 
-chaque user a accès à ses propres éléments de travail personnel
+Chaque user a accès à ses propres éléments de travail personnel
 -> création d'éléments
 -> lecture des éléments
 -> modification des éléments
