@@ -4,25 +4,25 @@ import "./styles.css";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000/api/v1";
 const STATUS_LABELS = {
-  a_faire: "A faire",
+  a_faire: "À faire",
   en_cours: "En cours",
-  termine: "Termine",
+  termine: "Terminé",
 };
 
 const STATUS_META = {
   a_faire: {
-    label: "A faire",
-    shortLabel: "Todo",
+    label: "À faire",
+    shortLabel: "À faire",
     className: "status-todo",
   },
   en_cours: {
     label: "En cours",
-    shortLabel: "Working on it",
+    shortLabel: "En cours",
     className: "status-working",
   },
   termine: {
-    label: "Termine",
-    shortLabel: "Done",
+    label: "Terminé",
+    shortLabel: "Terminé",
     className: "status-done",
   },
 };
@@ -140,7 +140,7 @@ function App() {
 
         clearSession();
         setSession({ access: null, refresh: null });
-        throw new Error("Session expiree");
+        throw new Error("Session expirée");
       }
 
       if (!response.ok) {
@@ -251,7 +251,7 @@ function App() {
           <span className="workspace-icon">W</span>
           <div>
             <strong>Mon workspace</strong>
-            <small>{tasks.length} elements</small>
+            <small>{tasks.length} éléments</small>
           </div>
         </div>
       </aside>
@@ -259,14 +259,14 @@ function App() {
       <section className="product-area">
         <header className="topbar">
           <div>
-            <p className="eyebrow">Work management</p>
+          <p className="eyebrow">Gestion du travail</p>
             <h1>{pageTitle}</h1>
           </div>
           <div className="account">
             <span className="avatar">{(user?.username || "C").slice(0, 1).toUpperCase()}</span>
-            <span>{user?.username || "Connecte"}</span>
+            <span>{user?.username || "Connecté"}</span>
             <button className="ghost-button" onClick={handleLogout}>
-              Deconnexion
+              Déconnexion
             </button>
           </div>
         </header>
@@ -332,8 +332,8 @@ function AuthScreen({ onLogin, message }) {
         const createdUser = await registerResponse.json();
         setInfo(
           createdUser.is_active
-            ? "Compte cree. Tu peux te connecter."
-            : "Compte cree. Confirme ton inscription depuis le mail recu avant de te connecter.",
+            ? "Compte créé. Tu peux te connecter."
+            : "Compte créé. Confirme ton inscription depuis le mail reçu avant de te connecter.",
         );
         setMode("login");
         setForm({ ...form, password: "" });
@@ -373,7 +373,7 @@ function AuthScreen({ onLogin, message }) {
             <span className="brand-mark">T</span>
             <strong>TaskFlow</strong>
           </div>
-          <p className="eyebrow">Work OS personnel</p>
+          <p className="eyebrow">Espace de travail personnel</p>
           <h1>Le hub simple et rapide pour gérer toutes tes tâches</h1>
         </div>
 
@@ -433,7 +433,7 @@ function AuthScreen({ onLogin, message }) {
           </label>
 
           <button className="primary-button" disabled={busy}>
-            {busy ? "Connexion..." : mode === "login" ? "Se connecter" : "Creer le compte"}
+            {busy ? "Connexion..." : mode === "login" ? "Se connecter" : "Créer le compte"}
           </button>
         </form>
 
@@ -482,14 +482,14 @@ function Dashboard({ tasks }) {
       <div className="dashboard-hero">
         <div>
           <p className="eyebrow">Vue d'ensemble</p>
-          <h2>Ce qui merite ton attention</h2>
+          <h2>Ce qui mérite ton attention</h2>
           <p className="board-subtitle">
-            Priorites, echeances et avancement reunis au meme endroit.
+            Priorités, échéances et avancement réunis au même endroit.
           </p>
         </div>
         <div className="progress-widget" aria-label="Progression globale">
           <strong>{completion}%</strong>
-          <span>complete</span>
+          <span>complété</span>
           <div className="progress-track">
             <span style={{ width: `${completion}%` }} />
           </div>
@@ -497,18 +497,18 @@ function Dashboard({ tasks }) {
       </div>
 
       <div className="metric-grid">
-        <MetricCard label="Total" value={total} detail="elements suivis" />
+        <MetricCard label="Total" value={total} detail="éléments suivis" />
         <MetricCard label="En cours" value={active} detail="actions actives" />
-        <MetricCard label="A faire" value={todo} detail="dans le backlog" />
-        <MetricCard label="Urgent" value={highPriority} detail="priorite haute" />
-        <MetricCard label="En retard" value={overdue} detail="date depassee" tone="danger" />
+        <MetricCard label="À faire" value={todo} detail="dans le backlog" />
+        <MetricCard label="Urgent" value={highPriority} detail="priorité haute" />
+        <MetricCard label="En retard" value={overdue} detail="date dépassée" tone="danger" />
       </div>
 
       <div className="dashboard-grid">
         <section className="dashboard-panel">
           <header>
-            <h3>Repartition par statut</h3>
-            <span>{done} terminees</span>
+            <h3>Répartition par statut</h3>
+            <span>{done} terminées</span>
           </header>
           <div className="stat-list">
             {statusStats.map(({ status, count }) => (
@@ -525,7 +525,7 @@ function Dashboard({ tasks }) {
 
         <section className="dashboard-panel">
           <header>
-            <h3>Charge par priorite</h3>
+            <h3>Charge par priorité</h3>
             <span>{highPriority} haute</span>
           </header>
           <div className="stat-list">
@@ -543,8 +543,8 @@ function Dashboard({ tasks }) {
 
         <section className="dashboard-panel next-panel">
           <header>
-            <h3>Prochaines echeances</h3>
-            <span>{upcomingTasks.length} a suivre</span>
+            <h3>Prochaines échéances</h3>
+            <span>{upcomingTasks.length} à suivre</span>
           </header>
           <div className="next-list">
             {upcomingTasks.map((task) => (
@@ -559,7 +559,7 @@ function Dashboard({ tasks }) {
               </article>
             ))}
             {upcomingTasks.length === 0 && (
-              <p className="empty-text">Aucune echeance active</p>
+              <p className="empty-text">Aucune échéance active</p>
             )}
           </div>
         </section>
@@ -626,43 +626,43 @@ function Automations({ tasks }) {
     {
       id: "overdue",
       title: "Surveiller les retards",
-      description: "Signale les taches actives dont la date est depassee.",
+      description: "Signale les tâches actives dont la date est dépassée.",
       count: overdueTasks.length,
     },
     {
       id: "focus",
-      title: "Mettre en avant les priorites hautes",
-      description: "Garde les elements critiques visibles dans le suivi.",
+      title: "Mettre en avant les priorités hautes",
+      description: "Garde les éléments critiques visibles dans le suivi.",
       count: highPriorityTasks.length,
     },
     {
       id: "schedule",
-      title: "Detecter les taches sans date",
-      description: "Repere les elements actifs qui n'ont pas encore d'echeance.",
+      title: "Détecter les tâches sans date",
+      description: "Repère les éléments actifs qui n'ont pas encore d'échéance.",
       count: noDateTasks.length,
     },
     {
       id: "weekly",
-      title: "Preparer la semaine",
-      description: "Liste les echeances qui arrivent dans les 7 prochains jours.",
+      title: "Préparer la semaine",
+      description: "Liste les échéances qui arrivent dans les 7 prochains jours.",
       count: dueSoonTasks.length,
     },
   ];
 
   const recommendations = [
     {
-      title: "A traiter maintenant",
-      detail: `${overdueTasks.length} tache(s) en retard`,
+      title: "À traiter maintenant",
+      detail: `${overdueTasks.length} tâche(s) en retard`,
       tone: overdueTasks.length ? "danger" : "",
     },
     {
-      title: "A planifier",
-      detail: `${noDateTasks.length} tache(s) sans date`,
+      title: "À planifier",
+      detail: `${noDateTasks.length} tâche(s) sans date`,
       tone: noDateTasks.length ? "warning" : "",
     },
     {
       title: "Focus",
-      detail: `${highPriorityTasks.length} priorite(s) haute(s) actives`,
+      detail: `${highPriorityTasks.length} priorité(s) haute(s) actives`,
       tone: highPriorityTasks.length ? "info" : "",
     },
   ];
@@ -676,21 +676,21 @@ function Automations({ tasks }) {
       <div className="dashboard-hero">
         <div>
           <p className="eyebrow">Automations</p>
-          <h2>Piloter le travail sans tout verifier a la main</h2>
+          <h2>Piloter le travail sans tout vérifier à la main</h2>
           <p className="board-subtitle">
-            Des regles simples pour reperer les retards, les priorites et les taches a planifier.
+            Des règles simples pour repérer les retards, les priorités et les tâches à planifier.
           </p>
         </div>
         <div className="automation-score" aria-label="Automatisations actives">
           <strong>{Object.values(enabledRules).filter(Boolean).length}</strong>
-          <span>regles actives</span>
+          <span>règles actives</span>
         </div>
       </div>
 
       <div className="automation-grid">
         <section className="dashboard-panel automation-rules">
           <header>
-            <h3>Regles recommandees</h3>
+            <h3>Règles recommandées</h3>
             <span>{rules.length} disponibles</span>
           </header>
           <div className="rule-list">
@@ -699,7 +699,7 @@ function Automations({ tasks }) {
                 <div>
                   <strong>{rule.title}</strong>
                   <p>{rule.description}</p>
-                  <small>{rule.count} element(s) concernes</small>
+                  <small>{rule.count} élément(s) concerné(s)</small>
                 </div>
                 <button
                   className={`toggle-pill ${enabledRules[rule.id] ? "active" : ""}`}
@@ -717,7 +717,7 @@ function Automations({ tasks }) {
         <section className="dashboard-panel">
           <header>
             <h3>Recommandations</h3>
-            <span>basees sur le board</span>
+            <span>basées sur le board</span>
           </header>
           <div className="recommendation-list">
             {recommendations.map((item) => (
@@ -734,8 +734,8 @@ function Automations({ tasks }) {
 
         <section className="dashboard-panel automation-preview">
           <header>
-            <h3>Apercu des actions</h3>
-            <span>{dueSoonTasks.length} echeance(s) proches</span>
+            <h3>Aperçu des actions</h3>
+            <span>{dueSoonTasks.length} échéance(s) proche(s)</span>
           </header>
           <div className="next-list">
             {dueSoonTasks.slice(0, 5).map((task) => (
@@ -806,15 +806,15 @@ function LogsPanel({ api, setMessage }) {
     <section className="logs-page" id="logs">
       <div className="dashboard-hero">
         <div>
-          <p className="eyebrow">Observabilite</p>
+          <p className="eyebrow">Observabilité</p>
           <h2>Journal de l'application</h2>
           <p className="board-subtitle">
-            Consulte les requetes API, les erreurs serveur et les evenements utiles.
+            Consulte les requêtes API, les erreurs serveur et les événements utiles.
           </p>
         </div>
-        <div className="automation-score" aria-label="Nombre de logs affiches">
+        <div className="automation-score" aria-label="Nombre de logs affichés">
           <strong>{logs.length}</strong>
-          <span>lignes affichees</span>
+          <span>lignes affichées</span>
         </div>
       </div>
 
@@ -846,8 +846,8 @@ function LogsPanel({ api, setMessage }) {
 
       <section className="dashboard-panel logs-panel">
         <header>
-          <h3>Requetes et evenements</h3>
-          <span>{loadingLogs ? "chargement" : `${logs.length} resultat(s)`}</span>
+          <h3>Requêtes et événements</h3>
+          <span>{loadingLogs ? "chargement" : `${logs.length} résultat(s)`}</span>
         </header>
         <div className="log-list">
           {logs.map((entry, index) => (
@@ -862,7 +862,7 @@ function LogsPanel({ api, setMessage }) {
             </article>
           ))}
           {logs.length === 0 && (
-            <p className="empty-text">Aucun log a afficher</p>
+            <p className="empty-text">Aucun log à afficher</p>
           )}
         </div>
       </section>
@@ -943,15 +943,15 @@ function TaskBoard({ api, tasks, setTasks, setMessage }) {
     <section className="workspace" id="workspace">
       <div className="board-hero">
         <div>
-          <p className="eyebrow">Main board</p>
+          <p className="eyebrow">Tableau principal</p>
           <h2>Plan de travail</h2>
           <p className="board-subtitle">
-            Suis les elements, change les statuts et garde la progression visible.
+            Suis les éléments, change les statuts et garde la progression visible.
           </p>
         </div>
         <div className="progress-widget" aria-label="Progression">
           <strong>{progress}%</strong>
-          <span>termine</span>
+          <span>terminé</span>
           <div className="progress-track">
             <span style={{ width: `${progress}%` }} />
           </div>
@@ -977,7 +977,7 @@ function TaskBoard({ api, tasks, setTasks, setMessage }) {
         </div>
         <div className="board-actions">
           <div className="board-stats">
-            <span>{tasks.length} elements</span>
+            <span>{tasks.length} éléments</span>
             <span>{groupedTasks.en_cours.length} actifs</span>
           </div>
           <button
@@ -995,7 +995,7 @@ function TaskBoard({ api, tasks, setTasks, setMessage }) {
           <form className="task-modal" onSubmit={createTask} role="dialog" aria-modal="true">
             <header>
               <div>
-                <p className="eyebrow">Nouvel element</p>
+                <p className="eyebrow">Nouvel élément</p>
                 <h2>Nouvelle tâche</h2>
               </div>
               <button
@@ -1013,7 +1013,7 @@ function TaskBoard({ api, tasks, setTasks, setMessage }) {
                 name="title"
                 value={draft.title}
                 onChange={updateDraft}
-                placeholder="Ajouter un element"
+                placeholder="Ajouter un élément"
                 autoFocus
                 required
               />
@@ -1024,18 +1024,18 @@ function TaskBoard({ api, tasks, setTasks, setMessage }) {
                 name="description"
                 value={draft.description}
                 onChange={updateDraft}
-                placeholder="Details utiles"
+                placeholder="Détails utiles"
                 rows="3"
               />
             </label>
             <div className="modal-field-grid">
               <label>
-                Owner
+                Responsable
                 <input
                   name="owner"
                   value={draft.owner}
                   onChange={updateDraft}
-                  placeholder="Owner"
+                  placeholder="Responsable"
                 />
               </label>
               <label>
@@ -1050,7 +1050,7 @@ function TaskBoard({ api, tasks, setTasks, setMessage }) {
             </div>
             <div className="modal-field-grid">
               <label>
-                Priorite
+                Priorité
                 <select name="priority" value={draft.priority} onChange={updateDraft}>
                   {PRIORITIES.map((priority) => (
                     <option key={priority} value={priority}>
@@ -1078,7 +1078,7 @@ function TaskBoard({ api, tasks, setTasks, setMessage }) {
               >
                 Annuler
               </button>
-              <button className="primary-button">Creer</button>
+              <button className="primary-button">Créer</button>
             </div>
           </form>
         </div>
@@ -1114,7 +1114,7 @@ function TaskBoard({ api, tasks, setTasks, setMessage }) {
                   />
                 ))}
                 {groupedTasks[status].length === 0 && (
-                  <p className="empty-text">Aucun element</p>
+                  <p className="empty-text">Aucun élément</p>
                 )}
               </div>
             </section>
@@ -1135,11 +1135,11 @@ function TaskGroup({ status, tasks, onUpdate, onDelete }) {
       </header>
       <div className="grid-table" role="table" aria-label={STATUS_META[status].label}>
         <div className="grid-row grid-head" role="row">
-          <span role="columnheader">Element</span>
-          <span role="columnheader">Owner</span>
+          <span role="columnheader">Élément</span>
+          <span role="columnheader">Responsable</span>
           <span role="columnheader">Statut</span>
           <span role="columnheader">Date</span>
-          <span role="columnheader">Priorite</span>
+          <span role="columnheader">Priorité</span>
           <span role="columnheader">Actions</span>
         </div>
         {tasks.map((task) => (
@@ -1152,7 +1152,7 @@ function TaskGroup({ status, tasks, onUpdate, onDelete }) {
         ))}
         {tasks.length === 0 && (
           <div className="grid-row empty-row" role="row">
-            <span>Aucun element dans ce groupe</span>
+            <span>Aucun élément dans ce groupe</span>
           </div>
         )}
       </div>
@@ -1214,7 +1214,7 @@ function TaskRow({ task, onUpdate, onDelete }) {
             placeholder="Notes"
           />
         </div>
-        <input name="owner" value={form.owner} onChange={updateField} placeholder="Owner" />
+        <input name="owner" value={form.owner} onChange={updateField} placeholder="Responsable" />
         <select name="status" value={form.status} onChange={updateField}>
           {Object.entries(STATUS_LABELS).map(([value, label]) => (
             <option key={value} value={value}>
@@ -1317,7 +1317,7 @@ function TaskItem({ task, onUpdate, onDelete }) {
           ))}
         </select>
         <div className="card-edit-grid">
-          <input name="owner" value={form.owner} onChange={updateField} placeholder="Owner" />
+          <input name="owner" value={form.owner} onChange={updateField} placeholder="Responsable" />
           <input name="due_date" type="date" value={form.due_date} onChange={updateField} />
           <select name="priority" value={form.priority} onChange={updateField}>
             {PRIORITIES.map((priority) => (
